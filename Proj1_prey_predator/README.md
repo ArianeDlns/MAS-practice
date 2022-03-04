@@ -1,5 +1,12 @@
 # Prey - Predator Model
 
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) 
+[![Open in Visual Studio Code](https://img.shields.io/badge/Editor-VSCode-blue?style=flat-square&logo=visual-studio-code&logoColor=white)](https://github.dev/ArianeDlns/MAS-practice/tree/master)
+
+<img src="prey_predator/resources/wolf.png" alt="wolf" width="200"/>
+<img src="prey_predator/resources/sheep.png" alt="wolf" width="200"/>
+
+
 ## Summary
 
 A simple ecological model, consisting of three agent types: wolves, sheep, and grass. The wolves and the sheep wander around the grid at random. Wolves and sheep both expend energy moving around, and replenish it by eating. Sheep eat grass, and wolves eat sheep if they end up on the same grid cell.
@@ -40,6 +47,26 @@ Then open your browser to [http://127.0.0.1:8521/](http://127.0.0.1:8521/) and p
 * ``prey_predator/model.py``: Defines the Prey-Predator model itself
 * ``prey_predator/server.py``: Sets up the interactive visualization server
 * ``run.py``: Launches a model visualization server.
+
+## What we did  
+
+- ``prey_predator/server.py``: Sets up the interactive visualization server  
+We configured: 
+    - wolf_sheep_portrayal
+    - model_params
+    - MyTextElement
+- ``prey_predator/agents.py``: Defines the Wolf, Sheep, and GrassPatch agent classes.  
+We configured: 
+    - Wolf
+    - Sheep
+    - Grass 
+- ``prey_predator/model.py``: Defines the Prey-Predator model itself  
+We configured: 
+    - creation of Sheeps
+    - creation of Wolves
+    - creation of Grass
+    - running one step
+    - running the whole model
 
 ## Further Reading
 
