@@ -1,6 +1,7 @@
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.UserParam import UserSettableParameter
+from mesa.visualization.modules import TextElement
 
 from prey_predator.agents import Wolf, Sheep, GrassPatch
 from prey_predator.model import WolfSheep
@@ -39,6 +40,15 @@ def wolf_sheep_portrayal(agent):
 
 
 canvas_element = CanvasGrid(wolf_sheep_portrayal, 20, 20, 500, 500)
+
+class MyTextElement(TextElement):
+    def render(self,model):
+        wolf_ratio = model.schedule.get_breed_count(Sheep)/model.schedule.get_breed_count(Wolf)
+        sheep_remaining = model.schedule.get_breed_count(Sheep)
+        return "<br>Sheep/Wolf Ratio: {}<br>Sheep Remaining: {}".format(
+            wolf_ratio, sheep_remaining
+        )
+
 chart_element = ChartModule(
     [{"Label": "Wolves", "Color": "#AA0000"}, {"Label": "Sheep", "Color": "#666666"}]
 )
@@ -75,6 +85,7 @@ model_params = {
 }
 
 server = ModularServer(
-    WolfSheep, [canvas_element, chart_element], "Wolf Sheep Predation", model_params
+    WolfSheep, [canvas_element, MyTextElement(), chart_element], "Wolf Sheep Predation", model_params
 )
+
 server.port = 8521
