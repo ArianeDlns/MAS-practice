@@ -4,7 +4,7 @@
 [![Open in Visual Studio Code](https://img.shields.io/badge/Editor-VSCode-blue?style=flat-square&logo=visual-studio-code&logoColor=white)](https://github.dev/ArianeDlns/MAS-practice/tree/master/Proj1_prey_predator)
 
 <p align="center">
-<img src="prey_predator/old/resources/wolf.png" alt="wolf" width="200"/> <img src="prey_predator/old/resources/sheep.png" alt="wolf" width="200"/>
+<img src="prey_predator/old_mesa/resources/wolf.png" alt="wolf" width="200"/> <img src="prey_predator/old_mesa/resources/sheep.png" alt="wolf" width="200"/>
 
 
 ## Summary
@@ -72,7 +72,7 @@ Then open your browser to [http://127.0.0.1:8521/](http://127.0.0.1:8521/) and p
 │   │   ├── sheep_icon.png
 │   │   └── wolf_icon.png
 │   ├── model.py
-│   ├── old #Model from mesa example
+│   ├── old_mesa #Model from mesa example
 │   │   ├── agents.py
 │   │   ├── model.py
 │   │   ├── random_walk.py
