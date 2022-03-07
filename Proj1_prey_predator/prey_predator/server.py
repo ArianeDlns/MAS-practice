@@ -1,7 +1,6 @@
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.UserParam import UserSettableParameter
-from mesa.visualization.modules import TextElement
 
 from prey_predator.agents import Wolf, Sheep, GrassPatch
 from prey_predator.model import WolfSheep
@@ -14,78 +13,69 @@ def wolf_sheep_portrayal(agent):
     portrayal = {}
 
     if type(agent) is Sheep:
-        portrayal["Shape"] = "prey_predator/resources/sheep.png"
-        portrayal["scale"] = 0.9
-        portrayal["Layer"] = 1
+        portrayal = {"Shape": "prey_predator/icons/sheep_icon.png",
+                 "scale": 0.9,
+                 "Layer": 1}
 
     elif type(agent) is Wolf:
-        portrayal["Shape"] = "prey_predator/resources/wolf.png"
-        portrayal["scale"] = 0.9
-        portrayal["Layer"] = 2
-        portrayal["text"] = round(agent.energy, 1)
-        portrayal["text_color"] = "White"
+        portrayal = {"Shape": "prey_predator/icons/wolf_icon.png",
+                 "scale" : 0.9,
+                 "Layer": 2}
 
     elif type(agent) is GrassPatch:
-        if agent.fully_grown:
-            portrayal["Color"] = ["#00FF00", "#00CC00", "#009900"]
+        if agent.grown:
+            portrayal = {"Shape": "rect",
+                    "Color": "#00aa00",
+                    "Filled": "true",
+                    "Layer": 0,
+                    "w": 1,
+                    "h": 1}
         else:
-            portrayal["Color"] = ["#84e184", "#adebad", "#d6f5d6"]
-        portrayal["Shape"] = "rect"
-        portrayal["Filled"] = "true"
-        portrayal["Layer"] = 0
-        portrayal["w"] = 1
-        portrayal["h"] = 1
+            portrayal = {"Shape": "rect",
+                    "Color": "#55ff55",
+                    "Filled": "true",
+                    "Layer": 0,
+                    "w": 1,
+                    "h": 1}
 
     return portrayal
 
 
-canvas_element = CanvasGrid(wolf_sheep_portrayal, 20, 20, 500, 500)
 
-class MyTextElement(TextElement):
-    def render(self,model):
-        wolf_ratio = model.schedule.get_breed_count(Sheep)/model.schedule.get_breed_count(Wolf)
-        sheep_remaining = model.schedule.get_breed_count(Sheep)
-        return "<br>Sheep/Wolf Ratio: {}<br>Sheep Remaining: {}".format(
-            wolf_ratio, sheep_remaining
-        )
 
+
+
+height = 20
+width = 20
+initial_sheep = UserSettableParameter('slider', 'Initial sheep', value=50, min_value=10, max_value=200, step=1)
+initial_wolves = UserSettableParameter('slider', 'Initial wolves', value=20, min_value=1, max_value=100, step=1)
+sheep_reproduce =  UserSettableParameter('slider', 'Sheep reproduce', value=0.06, min_value=0, max_value=1, step=0.01)
+wolf_reproduce =  UserSettableParameter('slider', 'Wolf reproduce', value=0.05, min_value=0, max_value=1, step=0.01)
+wolf_gain_from_food = UserSettableParameter('slider', 'Wolf gains from food', value=10, min_value=0, max_value=100, step=1)
+grass = UserSettableParameter('checkbox', 'Grass', value=True)
+grass_regrowth_time = UserSettableParameter('slider', 'Grass regrowth time', value=30, min_value=1, max_value=100, step=1)
+sheep_gain_from_food = UserSettableParameter('slider', 'Sheep gains from food', value=10, min_value=0, max_value=100, step=1)
+
+canvas_element = CanvasGrid(wolf_sheep_portrayal, height, width, 500, 500)
 chart_element = ChartModule(
     [{"Label": "Wolves", "Color": "#AA0000"}, {"Label": "Sheep", "Color": "#666666"}]
 )
 
 model_params = {
-    "grass": UserSettableParameter("checkbox", "Grass Enabled", True),
-    "grass_regrowth_time": UserSettableParameter(
-        "slider", "Grass Regrowth Time", 20, 1, 50
-    ),
-    "initial_sheep": UserSettableParameter(
-        "slider", "Initial Sheep Population", 100, 10, 300
-    ),
-    "sheep_reproduce": UserSettableParameter(
-        "slider", "Sheep Reproduction Rate", 0.04, 0.01, 1.0, 0.01
-    ),
-    "initial_wolves": UserSettableParameter(
-        "slider", "Initial Wolf Population", 50, 10, 300
-    ),
-    "wolf_reproduce": UserSettableParameter(
-        "slider",
-        "Wolf Reproduction Rate",
-        0.05,
-        0.01,
-        1.0,
-        0.01,
-        description="The rate at which wolf agents reproduce.",
-    ),
-    "wolf_gain_from_food": UserSettableParameter(
-        "slider", "Wolf Gain From Food Rate", 20, 1, 50
-    ),
-    "sheep_gain_from_food": UserSettableParameter(
-        "slider", "Sheep Gain From Food", 4, 1, 10
-    ),
+    "height":height,
+    "width":width,
+    "initial_sheep":initial_sheep,
+    "initial_wolves":initial_wolves,
+    "sheep_reproduce":sheep_reproduce,
+    "wolf_reproduce":wolf_reproduce,
+    "wolf_gain_from_food":wolf_gain_from_food,
+    "grass":True,
+    "grass_regrowth_time":grass_regrowth_time,
+    "sheep_gain_from_food":sheep_gain_from_food,
+
 }
 
 server = ModularServer(
-    WolfSheep, [canvas_element, MyTextElement(), chart_element], "Wolf Sheep Predation", model_params
+    WolfSheep, [canvas_element, chart_element], "Prey Predator Model", model_params
 )
-
 server.port = 8521

@@ -1,8 +1,9 @@
 # Prey - Predator Model
 
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) 
-[![Open in Visual Studio Code](https://img.shields.io/badge/Editor-VSCode-blue?style=flat-square&logo=visual-studio-code&logoColor=white)](https://github.dev/ArianeDlns/MAS-practice/tree/master)
+[![Open in Visual Studio Code](https://img.shields.io/badge/Editor-VSCode-blue?style=flat-square&logo=visual-studio-code&logoColor=white)](https://github.dev/ArianeDlns/MAS-practice/tree/master/Proj1_prey_predator)
 
+<p align="center">
 <img src="prey_predator/resources/wolf.png" alt="wolf" width="200"/> <img src="prey_predator/resources/sheep.png" alt="wolf" width="200"/>
 
 
@@ -106,5 +107,8 @@ Wilensky, U. (1997). NetLogo Wolf Sheep Predation model. http://ccl.northwestern
 
 See also the [Lotka–Volterra equations
 ](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations) for an example of a classic differential-equation model with similar dynamics.
+[Lotka-Volterra](https://strimas.com/post/lotka-volterra/)
+
+Kazil, Jacqueline & Masad, David & Crooks, Andrew. (2020). [Utilizing Python for Agent-Based Modeling: The Mesa Framework.](https://www.researchgate.net/publication/344675633_Utilizing_Python_for_Agent-Based_Modeling_The_Mesa_Framework) 10.1007/978-3-030-61255-9_30. 
 
 The implementation is based on the mesa example that we can find in this [repository](https://github.com/projectmesa/mesa/tree/main/examples/wolf_sheep)

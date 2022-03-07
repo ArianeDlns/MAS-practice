@@ -1,6 +1,7 @@
 """
-Wolf-Sheep Predation Model
+Prey-Predator Model
 ================================
+
 Replication of the model found in NetLogo:
     Wilensky, U. (1997). NetLogo Wolf Sheep Predation model.
     http://ccl.northwestern.edu/netlogo/models/WolfSheepPredation.
@@ -36,8 +37,6 @@ class WolfSheep(Model):
     grass_regrowth_time = 30
     sheep_gain_from_food = 4
 
-    verbose = False  # Print-monitoring
-
     description = (
         "A model for simulating wolf and sheep (predator-prey) ecosystem modelling."
     )
@@ -57,6 +56,7 @@ class WolfSheep(Model):
     ):
         """
         Create a new Wolf-Sheep model with the given parameters.
+
         Args:
             initial_sheep: Number of sheep to start with
             initial_wolves: Number of wolves to start with
@@ -90,65 +90,48 @@ class WolfSheep(Model):
             }
         )
 
+        self.unique_id = 0 # new agent unique id
+
         # Create sheep:
-        for i in range(self.initial_sheep):
-            x = self.random.randrange(self.width)
-            y = self.random.randrange(self.height)
-            energy = self.random.randrange(2 * self.sheep_gain_from_food)
-            sheep = Sheep(self.next_id(), (x, y), self, True, energy)
-            self.grid.place_agent(sheep, (x, y))
-            self.schedule.add(sheep)
+        for _ in range(self.initial_sheep):
+            
+            x = self.random.randrange(self.grid.width)
+            y = self.random.randrange(self.grid.height)
+
+            sheep_agent = Sheep(unique_id = self.unique_id, pos = (x,y), model = self, moore = True, energy = 30)
+            self.unique_id += 1
+            self.schedule.add(sheep_agent)
+            self.grid.place_agent(sheep_agent, (x,y))
+
 
         # Create wolves
-        for i in range(self.initial_wolves):
-            x = self.random.randrange(self.width)
-            y = self.random.randrange(self.height)
-            energy = self.random.randrange(2 * self.wolf_gain_from_food)
-            wolf = Wolf(self.next_id(), (x, y), self, True, energy)
-            self.grid.place_agent(wolf, (x, y))
-            self.schedule.add(wolf)
+        for _ in range(self.initial_wolves):
+            x = self.random.randrange(self.grid.width)
+            y = self.random.randrange(self.grid.height)
+            wolf_agent = Wolf(unique_id = self.unique_id, pos = (x,y), model = self, moore = True, energy = 30)
+            self.unique_id += 1
+            self.schedule.add(wolf_agent)
+            self.grid.place_agent(wolf_agent, (x,y))
 
         # Create grass patches
-        if self.grass:
-            for agent, x, y in self.grid.coord_iter():
+        for x in range(self.grid.width):
+            for y in range(self.grid.height):
+                grass_agent = GrassPatch(unique_id = self.unique_id, pos = (x,y), model = self, fully_grown = True, countdown = self.grass_regrowth_time)
+                self.unique_id += 1
+                self.schedule.add(grass_agent)
+                self.grid.place_agent(grass_agent, (x,y))
 
-                fully_grown = self.random.choice([True, False])
-
-                if fully_grown:
-                    countdown = self.grass_regrowth_time
-                else:
-                    countdown = self.random.randrange(self.grass_regrowth_time)
-
-                patch = GrassPatch(self.next_id(), (x, y), self, fully_grown, countdown)
-                self.grid.place_agent(patch, (x, y))
-                self.schedule.add(patch)
-
-        self.running = True
-        self.datacollector.collect(self)
 
     def step(self):
         self.schedule.step()
-        # collect data
+
+        # Collect data
         self.datacollector.collect(self)
-        if self.verbose:
-            print(
-                [
-                    self.schedule.time,
-                    self.schedule.get_breed_count(Wolf),
-                    self.schedule.get_breed_count(Sheep),
-                ]
-            )
+
+        # ... to be completed
 
     def run_model(self, step_count=200):
 
-        if self.verbose:
-            print("Initial number wolves: ", self.schedule.get_breed_count(Wolf))
-            print("Initial number sheep: ", self.schedule.get_breed_count(Sheep))
-
-        for i in range(step_count):
+        for _ in step_count:
             self.step()
 
-        if self.verbose:
-            print("")
-            print("Final number wolves: ", self.schedule.get_breed_count(Wolf))
-            print("Final number sheep: ", self.schedule.get_breed_count(Sheep))
