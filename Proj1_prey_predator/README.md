@@ -4,7 +4,7 @@
 [![Open in Visual Studio Code](https://img.shields.io/badge/Editor-VSCode-blue?style=flat-square&logo=visual-studio-code&logoColor=white)](https://github.dev/ArianeDlns/MAS-practice/tree/master/Proj1_prey_predator)
 
 <p align="center">
-<img src="prey_predator/resources/wolf.png" alt="wolf" width="200"/> <img src="prey_predator/resources/sheep.png" alt="wolf" width="200"/>
+<img src="prey_predator/old/resources/wolf.png" alt="wolf" width="200"/> <img src="prey_predator/old/resources/sheep.png" alt="wolf" width="200"/>
 
 
 ## Summary
@@ -30,8 +30,8 @@ To evaluate the knowledge acquired in this course on Multi-Agent Based Simulatio
 - Grass is also explicitly modeled. Once grass is eaten it will only regrow after a fixed amount of time.
 
 ### To Do: 
-- [ ] 1. Implement the described Wolf Sheep Predation ABM.
-- [ ] 2. Create a visualization interface to setup and run the simulation.
+- [x] 1. Implement the described Wolf Sheep Predation ABM.
+- [x] 2. Create a visualization interface to setup and run the simulation.
 - [ ] 3. Write a short description of your implementation choices as well as a description of the behavior of the system and how you find the right parameters so that it is stable.
 - [ ] 4. Create a zip archive containing the files and upload it on the EDUNAO platform.
 
@@ -68,15 +68,26 @@ Then open your browser to [http://127.0.0.1:8521/](http://127.0.0.1:8521/) and p
 ├── prey_predator
 │   ├── __init__.py
 │   ├── agents.py
+│   ├── icons
+│   │   ├── sheep_icon.png
+│   │   └── wolf_icon.png
 │   ├── model.py
+│   ├── old #Model from mesa example
+│   │   ├── agents.py
+│   │   ├── model.py
+│   │   ├── random_walk.py
+│   │   ├── resources
+│   │   │   ├── favicon.ico
+│   │   │   ├── sheep.png
+│   │   │   ├── sheep_old.png
+│   │   │   ├── wolf.png
+│   │   │   └── wolf_old.png
 │   ├── random_walk.py
-│   ├── resources
-│   │   ├── sheep.png
-│   │   └── wolf.png
 │   ├── schedule.py
 │   └── server.py
 ├── requirements.txt
-└── run.py
+├── run.py
+└── testing_model.ipynb # Test on notebook
 ```
 
 ## What we did  
