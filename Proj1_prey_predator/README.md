@@ -68,6 +68,16 @@ The default parameters should produce an ecosystem in equilibrium. Populations o
     <img src="prey_predator/graphs/Equilibrium_default_settings.jpeg">
 </p>
 
+To get to an equilibrium, we have played with the different parameters available in the sliders. Iteratively, we ran the model a few times in order to see the impact of each variables.
+
+The initial populations of sheep and wolves are somehow quite less important than the other variables. Surely we don't want a population of wolves that is too high and would extinct the sheep population. The sheep population is also monitored by the availability of food so a too high population would regulate itself over time.
+
+The reproduce probabilites are quite hard to play with as they allows species to explode their population exponentially. We tried to keep them low enough so that we don't see any big exponential population increase but still high enough so that the populations can maintain themselves.
+
+We have set the grass regrowth time at 30 as a fixed value so that we can tune the other parameters around this one. This parameter monitors the way food is available for sheeps.
+
+The gain from food variables for sheep and wolves were the variables that allowed us to really fine tune our model to converge to an equilibrium. Indeed, adjusting these values allowed us to play with the longevity of the two species. First, we had them at a high value which caused all wolves to live too long and multiply too fast and eat all sheeps (and going extinct afterwards...). Moreover, if sheeps gained too much energy from food, they would live too long and would only die from wolves eating them which would cause a desiquilibrium as the only death cause for sheep would be predatory. The number of wolves would therefore increase too much if sheeps lived too long. By lowering the two variables down, we managed to shorten the life expectation of our agents, allowing them to die from a lack of energy. In this scenario, sheeps dying from lack of energy denied food supplies for wolves and therefore monitored their population (as wolves only die from lack of energy). Moreover, wolves dying from energy allowed sheeps to regrow their population, completing the circle of life.
+
 ### To Do: 
 - [x] 1. Implement the described Wolf Sheep Predation ABM.
 - [x] 2. Create a visualization interface to setup and run the simulation.
