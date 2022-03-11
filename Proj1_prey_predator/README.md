@@ -4,8 +4,8 @@
 [![Open in Visual Studio Code](https://img.shields.io/badge/Editor-VSCode-blue?style=flat-square&logo=visual-studio-code&logoColor=white)](https://github.dev/ArianeDlns/MAS-practice/tree/master/Proj1_prey_predator)
 
 <p align="center">
-<img src="prey_predator/old_mesa/resources/wolf.png" alt="wolf" width="200"/> <img src="prey_predator/old_mesa/resources/sheep.png" alt="wolf" width="200"/>
-
+<img src="prey_predator/icons/wolf_icon.png" alt="wolf" width="200"/> <img src="prey_predator/icons/sheep_icon.png" alt="wolf" width="200"/>
+</p>
 
 ## Summary
 
@@ -29,11 +29,50 @@ To evaluate the knowledge acquired in this course on Multi-Agent Based Simulatio
 - To allow the population to continue, each wolf or sheep has a fixed probability of reproducing at each time step.
 - Grass is also explicitly modeled. Once grass is eaten it will only regrow after a fixed amount of time.
 
+## Desciption of implementation choices
+
+Grass Agent implementation :
+ - Grass agent are placed on every cell of the CanvasGrid at the beginning of the simulation.
+ - Each grass agent has the same regrowth time. When eaten, the agent cannot be eaten again during a couple steps corresponding to the regrowth time.
+
+Sheep Agent implementation : 
+ - Sheeps are placed randomly on the CanvasGrid at the beginning of the simulation. Their number is decided by a slider before running the MAS.
+ - Sheeps have an energy meter. This energy meter is decreased each time they move and reproduce. It is increased each time they eat grass.
+  - A sheep step consists in :
+    *  Making a random move on the grid (neighboring cells are calculated using Moore distance).
+    * Checking if there is grass on the same cell and if so eat it.
+    * Reproducing with some probability, deviding its energy in half so that the total initial energy of the mother sheep is shared equally between the newborn and itself.
+    * Checking if its own energy is null, if so the agent dies.
+
+Wolf Agent implementation :
+ - Wolves are placed randomly on the CanvasGrid at the beginning of the simulation. Their number is decided by a slider before running the MAS.
+ - Wolves have an energy meter. This energy meter is decreased each time they move and reproduce. It is increased each time they eat a sheep.
+ - A wolf step consists in :
+    * Making a random move on the grid (neighboring cells are claculated using Moore distance).
+    * Checking if there is a sheep on the same cell and if so eat it.
+    * Reproducing with some probability, deviding its energy in half so that the total initial energy of the mother wolf is shared equally between the newborn and itself.
+    * Checking if its own energy is null, if so the agent dies.
+
+Sliders defining the parameters of the model :
+ - initial_sheep : The number of initial sheeps to place. It ranges from 10 to 200, default value is 50.
+ - initial_wolves : The number of initial wolves to place. It ranges from 1 to 100, default value is 20.
+ - sheep_reproduce : The probability for a sheep to reproduce each turn. It ranges from 0 to 1, default value is 0.06.
+ - wolf_reproduce : The probability for a wolf to reproduce each turn. It ranges from 0 to 1, default value is 0.05.
+ - wolf_gain_grom_food : The energy value that a wolf gains each time it eats a sheep. It ranges from 0 to 100, default value is 10.
+ - grass_regrowth_time : The number of steps requiered for an ungrown grass agent to grow again. It ranges from 1 to 100, default value is 30.
+ - sheep_gain_from_food : The enery value that a sheep gains each time it eats grass. It ranges from 0 to 100, default value is 10.
+
+The default parameters should produce an ecosystem in equilibrium. Populations of sheeps and wolves should evolve as follows :
+
+<p align="center">
+    <img src="prey_predator/graphs/Equilibrium_default_settings.jpeg">
+</p>
+
 ### To Do: 
 - [x] 1. Implement the described Wolf Sheep Predation ABM.
 - [x] 2. Create a visualization interface to setup and run the simulation.
-- [ ] 3. Write a short description of your implementation choices as well as a description of the behavior of the system and how you find the right parameters so that it is stable.
-- [ ] 4. Create a zip archive containing the files and upload it on the EDUNAO platform.
+- [x] 3. Write a short description of your implementation choices as well as a description of the behavior of the system and how you find the right parameters so that it is stable.
+- [ ] 4. Create a zip archive containing the files and upload it on the EDUNAO platform / Send the GitHub link
 
 ## Installation
 
@@ -45,10 +84,10 @@ To install the dependencies use pip and the requirements.txt in this directory. 
 
 ## How to Run
 
-To run the model interactively, run ``mesa runserver`` in this directory. e.g.
+To run the model interactively, run ``python run.py`` in this directory. e.g.
 
 ```
-    $ mesa runserver
+    python run.py
 ```
 
 Then open your browser to [http://127.0.0.1:8521/](http://127.0.0.1:8521/) and press Reset, then Run.
