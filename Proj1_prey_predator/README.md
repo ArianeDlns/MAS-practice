@@ -110,6 +110,8 @@ Then open your browser to [http://127.0.0.1:8521/](http://127.0.0.1:8521/) and p
 │   ├── icons
 │   │   ├── sheep_icon.png
 │   │   └── wolf_icon.png
+│   ├── graphs
+│   │   ├── Equilibrium_default_settings.jpeg
 │   ├── model.py
 │   ├── old_mesa #Model from mesa example
 │   │   ├── agents.py
