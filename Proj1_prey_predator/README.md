@@ -31,6 +31,11 @@ To evaluate the knowledge acquired in this course on Multi-Agent Based Simulatio
 
 ## Desciption of implementation choices
 
+
+<p align="center">
+    <img src="prey_predator/graphs/Gameboard.png" width="500">
+</p>
+
 Grass Agent implementation :
  - Grass agent are placed on every cell of the CanvasGrid at the beginning of the simulation.
  - Each grass agent has the same regrowth time. When eaten, the agent cannot be eaten again during a couple steps corresponding to the regrowth time.
@@ -82,7 +87,7 @@ The gain from food variables for sheep and wolves were the variables that allowe
 - [x] 1. Implement the described Wolf Sheep Predation ABM.
 - [x] 2. Create a visualization interface to setup and run the simulation.
 - [x] 3. Write a short description of your implementation choices as well as a description of the behavior of the system and how you find the right parameters so that it is stable.
-- [ ] 4. Create a zip archive containing the files and upload it on the EDUNAO platform / Send the GitHub link
+- [x] 4. Create a zip archive containing the files and upload it on the EDUNAO platform / Send the GitHub link
 
 ## Installation
 
