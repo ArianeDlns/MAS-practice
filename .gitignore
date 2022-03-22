@@ -151,3 +151,4 @@ old/
 certs/
 actions/data/word2vec/
 references/
+*.pdf
