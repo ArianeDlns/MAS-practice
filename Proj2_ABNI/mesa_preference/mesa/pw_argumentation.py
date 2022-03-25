@@ -4,6 +4,8 @@ from spacy import prefer_gpu
 
 from communication.preferences.Preferences import Preferences
 from communication.agent.CommunicatingAgent import CommunicatingAgent
+from communication.message.Message import Message
+from communication.message.MessagePerformative import MessagePerformative
 from communication.message.MessageService import MessageService
 from communication.preferences.CriterionName import CriterionName
 from communication.preferences.CriterionValue import CriterionValue
@@ -28,6 +30,11 @@ class ArgumentAgent(CommunicatingAgent):
 
     def step(self):
         super().step()
+        list_messages = self.get_new_messages()
+        for message in list_messages:
+            print(message)
+            if message.get_performative() == MessagePerformative.PROPOSE:
+                    self.send_message(Message(self.get_name(), message.get_exp(), MessagePerformative.ACCEPT, "propose"))
 
     def get_preference(self):
         return self.preference
@@ -66,21 +73,6 @@ class ArgumentModel(Model):
     def __init__(self):
         self.schedule = RandomActivation(self)
         self.__messages_service = MessageService(self.schedule)
-
-        diesel_engine = Item("Diesel Engine", "A super cool diesel engine")
-        electric_engine = Item("Electric Engine", "A very quiet engine")
-
-        list_items = [diesel_engine, electric_engine]
-
-        agent_one = ArgumentAgent(0, self, "agent_one")
-        agent_two = ArgumentAgent(1, self, "agent_two")
-
-        agent_one.generate_preferences(list_items, csv=True)
-        agent_two.generate_preferences(list_items, csv=True)
-
-        self.schedule.add(agent_one)
-        self.schedule.add(agent_two)
-
         self.running = True
 
     def step(self):
@@ -90,3 +82,24 @@ class ArgumentModel(Model):
 
 if __name__ == "__main__":
     argument_model = ArgumentModel()
+
+    diesel_engine = Item("Diesel Engine", "A super cool diesel engine")
+    electric_engine = Item("Electric Engine", "A very quiet engine")
+    list_items = [diesel_engine, electric_engine]
+
+    # Agent 1
+    agent_one = ArgumentAgent(0, argument_model, "agent_one")
+    agent_one.generate_preferences(list_items, csv=True)
+    argument_model.schedule.add(agent_one)
+
+    # Agent 2
+    agent_two = ArgumentAgent(1, argument_model, "agent_two")
+    agent_two.generate_preferences(list_items, csv=True)
+    argument_model.schedule.add(agent_two)
+
+    agent_one.send_message(Message(agent_one.get_name(), agent_two.get_name(), MessagePerformative.PROPOSE, "Propose"))
+    
+    step = 0
+    while step < 10:
+        argument_model.step()
+        step += 1
