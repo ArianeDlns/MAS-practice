@@ -12,3 +12,12 @@ class Value(Enum):
     AVERAGE = 2
     GOOD = 3
     VERY_GOOD = 4
+
+    def matchvalue(value):
+        dictionnary_value = dict(VERY_BAD=0,
+                                BAD=1,
+                                AVERAGE=2,
+                                GOOD=3,
+                                VERY_GOOD=4)
+        word_value = list(dictionnary_value.keys())[value]
+        return Value[word_value]
