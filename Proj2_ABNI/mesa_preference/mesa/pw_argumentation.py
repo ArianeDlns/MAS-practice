@@ -24,17 +24,32 @@ class ArgumentAgent(CommunicatingAgent):
     """ TestAgent which inherit from CommunicatingAgent.
     """
 
-    def __init__(self, unique_id, model, name):
+    def __init__(self, unique_id, model, name, list_items):
         super().__init__(unique_id, model, name)
         self.preference = None
+        self._list_items = list_items
+        self._committed = False
 
     def step(self):
         super().step()
         list_messages = self.get_new_messages()
         for message in list_messages:
             print(message)
-            if message.get_performative() == MessagePerformative.PROPOSE:
-                    self.send_message(Message(self.get_name(), message.get_exp(), MessagePerformative.ACCEPT, "propose"))
+            if message.get_performative() == MessagePerformative.PROPOSE :
+                if self.preference.is_item_among_top_10_percent(message.get_content(), self._list_items):
+                    self.send_message(Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content=message.get_content()))
+                else:
+                    self.send_message(Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ASK_WHY, content=message.get_content()))
+            
+            if message.get_performative() == MessagePerformative.ACCEPT :
+                self.send_message(Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.COMMIT, content=message.get_content()))
+            
+            if message.get_performative() == MessagePerformative.ASK_WHY :
+                self.send_message(Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content=None))
+                self._committed = True
+            
+            if message.get_performative() == MessagePerformative.ARGUE:
+                self._committed = True
 
     def get_preference(self):
         return self.preference
@@ -88,17 +103,17 @@ if __name__ == "__main__":
     list_items = [diesel_engine, electric_engine]
 
     # Agent 1
-    agent_one = ArgumentAgent(0, argument_model, "agent_one")
+    agent_one = ArgumentAgent(0, argument_model, "agent_one", list_items)
     agent_one.generate_preferences(list_items, csv=True)
     argument_model.schedule.add(agent_one)
 
     # Agent 2
-    agent_two = ArgumentAgent(1, argument_model, "agent_two")
+    agent_two = ArgumentAgent(1, argument_model, "agent_two", list_items)
     agent_two.generate_preferences(list_items, csv=True)
     argument_model.schedule.add(agent_two)
 
-    agent_one.send_message(Message(agent_one.get_name(), agent_two.get_name(), MessagePerformative.PROPOSE, "Propose"))
-    
+    agent_one.send_message(Message(agent_one.get_name(), agent_two.get_name(), MessagePerformative.PROPOSE, ""))
+
     step = 0
     while step < 10:
         argument_model.step()
