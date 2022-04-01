@@ -2,6 +2,7 @@
 
 #TO RUN TESTS : python -m communication.preferences.Preferences
 import random
+import math
 
 from communication.preferences.CriterionName import CriterionName
 from communication.preferences.CriterionValue import CriterionValue
@@ -93,7 +94,7 @@ class Preferences:
         item_and_score_list = sorted(item_and_score_list, key = lambda x : x[1])
         
         ten_percent_best_items = []
-        for i in range(1,len(item_and_score_list)//10+1):
+        for i in range(1, math.ceil(len(item_and_score_list)/10+1)):
             ten_percent_best_items.append(item_and_score_list[-i][0])
 
         is_top_item = item in ten_percent_best_items

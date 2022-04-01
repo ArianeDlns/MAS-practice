@@ -47,8 +47,6 @@ class ArgumentAgent(CommunicatingAgent):
             if message.get_performative() == MessagePerformative.ASK_WHY :
                 self.send_message(Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content=None))
                 self._committed = True
-
-            
             
             if message.get_performative() == MessagePerformative.ARGUE:
                 self._committed = True
@@ -136,7 +134,7 @@ if __name__ == "__main__":
     agent_two.generate_preferences(list_items, csv=True)
     argument_model.schedule.add(agent_two)
 
-    agent_one.send_message(Message(agent_one.get_name(), agent_two.get_name(), MessagePerformative.PROPOSE, ""))
+    agent_one.send_message(Message(agent_one.get_name(), agent_two.get_name(), MessagePerformative.PROPOSE, diesel_engine))
 
     step = 0
     while step < 10:
