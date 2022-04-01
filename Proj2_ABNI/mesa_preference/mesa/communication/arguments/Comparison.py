@@ -14,4 +14,4 @@ class Comparison:
         """Creates a new comparison.
         """
         self.__best_criterion_name = best_criterion_name
-        self.__worst_criterion_name = worst_criterion_name
+        self.__worst_criterion_name = worst_criterion_name 
