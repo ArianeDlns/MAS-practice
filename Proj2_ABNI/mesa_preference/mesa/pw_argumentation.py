@@ -14,12 +14,14 @@ from communication.preferences.Item import Item
 from communication.arguments.Argument import Argument
 
 import pandas as pd
+import random
 from random import randint
 
 list_criterion = [CriterionName.PRODUCTION_COST, CriterionName.ENVIRONMENT_IMPACT,
                   CriterionName.CONSUMPTION, CriterionName.DURABILITY,
                   CriterionName.NOISE]
 
+NULL_ARG = 'No arguments to support this item'
 
 class ArgumentAgent(CommunicatingAgent):
     """ TestAgent which inherit from CommunicatingAgent.
@@ -47,9 +49,9 @@ class ArgumentAgent(CommunicatingAgent):
                     self.send_message(message_to_send_back)
 
             if message.get_performative() == MessagePerformative.ASK_WHY:
-                self.send_message(Message(from_agent=self.get_name(), to_agent=message.get_exp(
-                ), message_performative=MessagePerformative.ARGUE, content=None))
-                self._committed = True
+                message_to_send_back = self.handle_ASK_WHY_message(message)
+                self.send_message(message_to_send_back)
+                
             if message.get_performative() == MessagePerformative.ARGUE:
                 self._committed = True
 
@@ -72,6 +74,19 @@ class ArgumentAgent(CommunicatingAgent):
     def handle_ACCEPT_or_COMMIT_message(self, message):
         self._committed = True
         return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.COMMIT, content=message.get_content())
+
+    def handle_ASK_WHY_message(self, message):
+        o_i = message.get_content()
+        reasons = self.support_proposal(o_i)
+        if reasons == NULL_ARG: #No more argument pro o_i
+            list_items_copy = self._list_items.copy()
+            list_items_copy.remove(o_i)
+            o_j = random.choice(list_items_copy)
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.PROPOSE, content=o_j)
+        else:
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content = (o_i, reasons))
+
+
 
     def generate_preferences(self, list_items, verbose=False, csv=False) -> None:
         preferences = Preferences()
@@ -108,7 +123,7 @@ class ArgumentAgent(CommunicatingAgent):
         arg = Argument(boolean_decision=False, item=item)
         possible_proposals = arg.List_supporting_proposal(item, self.preference)
         if len(possible_proposals) == 0:
-            return 'No arguments to support this item'
+            return NULL_ARG
         for proposal in possible_proposals:
             if proposal.get_value().name == 'VERY_GOOD':
                 return proposal
@@ -148,7 +163,7 @@ if __name__ == "__main__":
     agent_two.generate_preferences(list_items, csv=True)
     argument_model.schedule.add(agent_two)
 
-    agent_one.send_message(Message(agent_one.get_name(), agent_two.get_name(), MessagePerformative.PROPOSE, diesel_engine))
+    agent_one.send_message(Message(agent_one.get_name(), agent_two.get_name(), MessagePerformative.PROPOSE, electric_engine))
 
     step = 0
     while step < 10:
