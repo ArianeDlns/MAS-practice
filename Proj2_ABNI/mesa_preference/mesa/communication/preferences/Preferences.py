@@ -66,7 +66,7 @@ class Preferences:
         """
         return item_1.get_score(self) > item_2.get_score(self)
 
-    def most_preferred (self, item_list) :
+    def most_preferred(self, item_list) :
         """ Returns the most preferred item from a list .
         """
         copied_item_list = item_list.copy()

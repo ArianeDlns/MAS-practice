@@ -36,23 +36,47 @@ class ArgumentAgent(CommunicatingAgent):
         for message in list_messages:
             print(message)
             if message.get_performative() == MessagePerformative.PROPOSE :
-                if self.preference.is_item_among_top_10_percent(message.get_content(), self._list_items):
-                    self.send_message(Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content=message.get_content()))
-                else:
-                    self.send_message(Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ASK_WHY, content=message.get_content()))
-            
-            if message.get_performative() == MessagePerformative.ACCEPT :
-                self.send_message(Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.COMMIT, content=message.get_content()))
+                message_to_send_back = self.handle_PROPOSE_message(message)
+                self.send_message(message_to_send_back)
+
+            if message.get_performative() == MessagePerformative.ACCEPT or message.get_performative() == MessagePerformative.COMMIT:
+                if not self._committed:
+                    message_to_send_back = self.handle_ACCEPT_or_COMMIT_message(message)
+                    self.send_message(message_to_send_back)
             
             if message.get_performative() == MessagePerformative.ASK_WHY :
                 self.send_message(Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content=None))
                 self._committed = True
+
+            
             
             if message.get_performative() == MessagePerformative.ARGUE:
                 self._committed = True
 
+
+            
+
+
     def get_preference(self):
         return self.preference
+
+    def handle_PROPOSE_message(self, message):
+        """Handle an item proposal"""
+        o_i = message.get_content()
+        preferences = self.get_preference()
+        if preferences.is_item_among_top_10_percent(o_i, self._list_items):
+            o_j = preferences.most_preferred(self._list_items)
+            if o_i == o_j :
+                return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content=o_i)
+            else:
+                return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.PROPOSE, content=o_j)
+        else:
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ASK_WHY, content=o_i)
+
+    def handle_ACCEPT_or_COMMIT_message(self, message):
+        self._committed = True
+        return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.COMMIT, content=message.get_content())
+    
 
     def generate_preferences(self, list_items, verbose=False, csv=False) -> None:
         preferences = Preferences()
