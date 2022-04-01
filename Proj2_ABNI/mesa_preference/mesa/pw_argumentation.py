@@ -106,10 +106,9 @@ class ArgumentAgent(CommunicatingAgent):
         :return: string - the strongest supportive argument
         """
         arg = Argument(boolean_decision=False, item=item)
-        possible_proposals = arg.List_supporting_proposal(
-            item, self.preference)
+        possible_proposals = arg.List_supporting_proposal(item, self.preference)
         if len(possible_proposals) == 0:
-            return 'No arguments in favor of this item'
+            return 'No arguments to support this item'
         for proposal in possible_proposals:
             if proposal.get_value().name == 'VERY_GOOD':
                 return proposal
