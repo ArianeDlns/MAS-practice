@@ -40,21 +40,28 @@ class Argument:
     def List_supporting_proposal(self, item: Item, preferences: Preferences):
         """Generate a list of premisses which can be used to support an item
         :param item: Item - name of the item
+        :param preferences: Preferences - preferences of the agent
         :return: list of all premisses PRO an item (sorted by order of importance based on agent's preferences)
         """
         supporting_proposal = []
         for criterion_name in preferences.get_criterion_name_list():
-            if preferences.get_value(item, criterion_name) >= Value.GOOD:
+            if (preferences.get_value(item, criterion_name) in [Value.GOOD,Value.VERY_GOOD]):
                 supporting_proposal.append(criterion_name)
         return supporting_proposal
 
     def List_attacking_proposal(self, item: Item, preferences: Preferences):
         """Generate a list of premisses which can be used to attack an item
         :param item: Item - name of the item
+        :param preferences: Preferences - preferences of the agent
         :return: list of all premisses CON an item (sorted by order of importance based on preferences)
         """
         attacking_proposal = []
         for criterion_name in preferences.get_criterion_name_list():
-            if preferences.get_value(item, criterion_name) <= Value.BAD:
+            if preferences.get_value(item, criterion_name)  in [Value.BAD,Value.VERY_BAD]:
                 attacking_proposal.append(criterion_name)
         return attacking_proposal
+
+    def get_decision(self):
+        """Returns the decision of the argument.
+        """
+        return self.__decision

@@ -1,3 +1,4 @@
+from turtle import pos
 from mesa import Model
 from mesa.time import RandomActivation
 from spacy import prefer_gpu
@@ -39,23 +40,31 @@ class ArgumentAgent(CommunicatingAgent):
         super().step()
         list_messages = self.get_new_messages()
         for message in list_messages:
+
+            # Print the message
             print(message)
+
+            # Handle the PROPOSE message
             if message.get_performative() == MessagePerformative.PROPOSE:
                 message_to_send_back = self.handle_PROPOSE_message(message)
                 self.send_message(message_to_send_back)
 
+            # Handle the ACCEPT or COMMIT message
             if message.get_performative() == MessagePerformative.ACCEPT or message.get_performative() == MessagePerformative.COMMIT:
                 if not self._committed:
                     message_to_send_back = self.handle_ACCEPT_or_COMMIT_message(
                         message)
                     self.send_message(message_to_send_back)
 
+            # Handle the ASK_WHY message
             if message.get_performative() == MessagePerformative.ASK_WHY:
                 message_to_send_back = self.handle_ASK_WHY_message(message)
                 self.send_message(message_to_send_back)
 
+            # Handle the ARGUE message
             if message.get_performative() == MessagePerformative.ARGUE:
-                self._committed = True
+                message_to_send_back = self.handle_ARGUE_message(message)
+                self.send_message(message_to_send_back)
 
     def get_preference(self):
         return self.preference
@@ -99,7 +108,17 @@ class ArgumentAgent(CommunicatingAgent):
             o_j = random.choice(list_items_copy)
             return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.PROPOSE, content=o_j)
         else:
-            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content=(o_i, reasons))
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content=(o_i,reasons))
+    
+    def handle_ARGUE_message(self, message):
+        o_i,reasons = message.get_content()
+        counter_reasons = self.support_proposal(o_i)
+        if reasons in [counter_reasons]: 
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content=o_i)
+        else:
+            preferences = self.get_preference()
+            o_j = preferences.most_preferred(self._list_items)
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.PROPOSE, content=o_j)
 
     def generate_preferences(self, list_items, verbose=False, csv=False) -> None:
         """
@@ -109,7 +128,10 @@ class ArgumentAgent(CommunicatingAgent):
         :param csv: boolean - if True, get the preferences from a csv file
         """
         preferences = Preferences()
+
+        # If the agent has not generated the preferences yet and if it is reading from a csv file
         if csv:
+            preferences.set_criterion_name_list(list_criterion)
             dict_item = {
                 "diesel_engine": list_items[0], "electric_engine": list_items[1]}
             pref = pd.read_csv('preferences.csv', sep=';')
@@ -122,6 +144,8 @@ class ArgumentAgent(CommunicatingAgent):
                 preferences.add_criterion_value(CriterionValue(dict_item[pref.iloc[idx].Item],
                                                                CriterionName[pref.iloc[idx].CriterionName],
                                                                Value[pref.iloc[idx].CriterionValue]))
+
+        # Generating preferences without csv file using random values
         else:
             preferences.set_criterion_name_list(list_criterion)
             for item in list_items:
@@ -136,7 +160,8 @@ class ArgumentAgent(CommunicatingAgent):
 
     def support_proposal(self, item):
         """
-        Used when the agent receives "ASK_WHY" after having proposed an item :param item: str - name of the item which was proposed
+        Used when the agent receives "ASK_WHY" after having proposed an item 
+        :param item: str - name of the item which was proposed
         :return: string - the strongest supportive argument
         """
         arg = Argument(boolean_decision=False, item=item)
@@ -145,12 +170,21 @@ class ArgumentAgent(CommunicatingAgent):
         if len(possible_proposals) == 0:
             return NULL_ARG
         for proposal in possible_proposals:
-            if proposal.get_value().name == 'VERY_GOOD':
+            if self.preference.get_value(item, proposal) == Value.VERY_GOOD:
                 return proposal
             else:
                 temp_proposal = proposal
         return temp_proposal
-
+    
+    def argument_parsing(self, argument):
+        """ returns ....
+        :param argument: Argument - the argument to parse
+        :return message: string - the strongest supportive argument
+        """
+        #proposal = self.support_proposal(item)
+        #message = item.get_name() + " because " + proposal.name + " is " + self.preference.get_value(item, proposal)
+        message = ''
+        return message
 
 class ArgumentModel(Model):
     """ 
@@ -171,7 +205,7 @@ if __name__ == "__main__":
     argument_model = ArgumentModel()
 
     diesel_engine = Item("Diesel Engine", "A super cool diesel engine")
-    electric_engine = Item("Electric Engine", "A very quiet engine")
+    electric_engine = Item("Electric Engine", "A very quiet and ecofriendly engine")
     list_items = [diesel_engine, electric_engine]
 
     # Agent 1
@@ -184,9 +218,11 @@ if __name__ == "__main__":
     agent_two.generate_preferences(list_items, csv=True)
     argument_model.schedule.add(agent_two)
 
+    # Send the proposal message
     agent_one.send_message(Message(agent_one.get_name(
     ), agent_two.get_name(), MessagePerformative.PROPOSE, electric_engine))
 
+    # Run the model on 10 steps
     step = 0
     while step < 10:
         argument_model.step()
