@@ -40,7 +40,7 @@ class Argument:
         """
         self.__couple_values_list.append(CoupleValue(criterion_name, value))
 
-    def List_supporting_proposal(self, item: Item, preferences: Preferences):
+    def list_supporting_proposal(self, item: Item, preferences: Preferences):
         """Generate a list of premisses which can be used to support an item
         :param item: Item - name of the item
         :param preferences: Preferences - preferences of the agent
@@ -52,7 +52,7 @@ class Argument:
                 supporting_proposal.append(criterion_name)
         return supporting_proposal
 
-    def List_attacking_proposal(self, item: Item, preferences: Preferences):
+    def list_attacking_proposal(self, item: Item, preferences: Preferences):
         """Generate a list of premisses which can be used to attack an item
         :param item: Item - name of the item
         :param preferences: Preferences - preferences of the agent
