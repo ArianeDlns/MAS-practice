@@ -23,8 +23,10 @@ list_criterion = [CriterionName.PRODUCTION_COST, CriterionName.ENVIRONMENT_IMPAC
 
 NULL_ARG = 'No arguments to support this item'
 
+
 class ArgumentAgent(CommunicatingAgent):
-    """ TestAgent which inherit from CommunicatingAgent.
+    """ 
+    ArgumentAgent which inherit from CommunicatingAgent.
     """
 
     def __init__(self, unique_id, model, name, list_items):
@@ -51,7 +53,7 @@ class ArgumentAgent(CommunicatingAgent):
             if message.get_performative() == MessagePerformative.ASK_WHY:
                 message_to_send_back = self.handle_ASK_WHY_message(message)
                 self.send_message(message_to_send_back)
-                
+
             if message.get_performative() == MessagePerformative.ARGUE:
                 self._committed = True
 
@@ -59,7 +61,10 @@ class ArgumentAgent(CommunicatingAgent):
         return self.preference
 
     def handle_PROPOSE_message(self, message):
-        """Handle an item proposal"""
+        """Handle an item proposal
+        :param message: Message - the message received
+        :return: Message - the message to send back
+        """
         o_i = message.get_content()
         preferences = self.get_preference()
         if preferences.is_item_among_top_10_percent(o_i, self._list_items):
@@ -72,23 +77,37 @@ class ArgumentAgent(CommunicatingAgent):
             return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ASK_WHY, content=o_i)
 
     def handle_ACCEPT_or_COMMIT_message(self, message):
+        """     
+        Handle an item proposal acceptance or commit
+        :param message: Message - the message received
+        :return: Message - the message to send back
+        """
         self._committed = True
         return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.COMMIT, content=message.get_content())
 
     def handle_ASK_WHY_message(self, message):
+        """
+        Used when the agent receives "ASK_WHY" after having proposed an item 
+        :param message: Message - the message received
+        :return: string - the strongest supportive argument
+        """
         o_i = message.get_content()
         reasons = self.support_proposal(o_i)
-        if reasons == NULL_ARG: #No more argument pro o_i
+        if reasons == NULL_ARG:  # No more argument pro o_i
             list_items_copy = self._list_items.copy()
             list_items_copy.remove(o_i)
             o_j = random.choice(list_items_copy)
             return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.PROPOSE, content=o_j)
         else:
-            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content = (o_i, reasons))
-
-
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content=(o_i, reasons))
 
     def generate_preferences(self, list_items, verbose=False, csv=False) -> None:
+        """
+        Generate the preferences of the agent
+        :param list_items: list of items
+        :param verbose: boolean - if True, print the preferences
+        :param csv: boolean - if True, get the preferences from a csv file
+        """
         preferences = Preferences()
         if csv:
             dict_item = {
@@ -121,7 +140,8 @@ class ArgumentAgent(CommunicatingAgent):
         :return: string - the strongest supportive argument
         """
         arg = Argument(boolean_decision=False, item=item)
-        possible_proposals = arg.List_supporting_proposal(item, self.preference)
+        possible_proposals = arg.List_supporting_proposal(
+            item, self.preference)
         if len(possible_proposals) == 0:
             return NULL_ARG
         for proposal in possible_proposals:
@@ -133,7 +153,8 @@ class ArgumentAgent(CommunicatingAgent):
 
 
 class ArgumentModel(Model):
-    """ ArgumentModel which inherit from Model.
+    """ 
+    ArgumentModel which inherit from Model.
     """
 
     def __init__(self):
@@ -163,7 +184,8 @@ if __name__ == "__main__":
     agent_two.generate_preferences(list_items, csv=True)
     argument_model.schedule.add(agent_two)
 
-    agent_one.send_message(Message(agent_one.get_name(), agent_two.get_name(), MessagePerformative.PROPOSE, electric_engine))
+    agent_one.send_message(Message(agent_one.get_name(
+    ), agent_two.get_name(), MessagePerformative.PROPOSE, electric_engine))
 
     step = 0
     while step < 10:
