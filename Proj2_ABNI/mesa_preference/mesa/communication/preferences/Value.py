@@ -21,3 +21,12 @@ class Value(Enum):
                                 VERY_GOOD=4)
         word_value = list(dictionnary_value.keys())[value]
         return Value[word_value]
+
+    def __str__(self):
+        dictionnary_value = dict(VERY_BAD="Very bad",
+                                BAD="Bad",
+                                AVERAGE="Average",
+                                GOOD="Good",
+                                VERY_GOOD="Very good")
+        word_value = list(dictionnary_value.keys())[self.value]
+        return dictionnary_value[word_value]

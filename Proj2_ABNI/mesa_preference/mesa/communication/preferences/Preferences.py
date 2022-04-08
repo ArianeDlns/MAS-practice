@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-#TO RUN TESTS : python -m communication.preferences.Preferences
+#TO RUN TESTS : python3 -m communication.preferences.Preferences
 import random
 import math
 
@@ -24,6 +24,11 @@ class Preferences:
         """
         self.__criterion_name_list = []
         self.__criterion_value_list = []
+    
+    def __str__(self):
+        """Returns a string representation of the Preferences.
+        """
+        return f"{self.__criterion_name_list} - {self.__criterion_value_list}"
 
     def get_criterion_name_list(self):
         """Returns the list of criterion name.
@@ -139,10 +144,14 @@ if __name__ == '__main__':
     print(electric_engine)
     print(diesel_engine.get_value(agent_pref, CriterionName.PRODUCTION_COST))
     print(agent_pref.is_preferred_criterion(CriterionName.CONSUMPTION, CriterionName.NOISE))
+
     print('Electric Engine > Diesel Engine : {}'.format(agent_pref.is_preferred_item(electric_engine, diesel_engine)))
     print('Diesel Engine > Electric Engine : {}'.format(agent_pref.is_preferred_item(diesel_engine, electric_engine)))
+
     print('Electric Engine (for agent 1) = {}'.format(electric_engine.get_score(agent_pref)))
     print('Diesel Engine (for agent 1) = {}'.format(diesel_engine.get_score(agent_pref)))
+
     print('Most preferred item is : {}'.format(agent_pref.most_preferred([diesel_engine, electric_engine]).get_name()))
+    
     print('Is Electric Engine top 10% (for agent 1) ? : {}'.format(agent_pref.is_item_among_top_10_percent(electric_engine, [diesel_engine, electric_engine])))
     print('Is Diesel Engine top 10% (for agent 1) ? : {}'.format(agent_pref.is_item_among_top_10_percent(diesel_engine, [diesel_engine, electric_engine])))

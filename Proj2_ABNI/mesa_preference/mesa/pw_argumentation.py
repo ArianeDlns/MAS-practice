@@ -34,7 +34,9 @@ class ArgumentAgent(CommunicatingAgent):
         super().__init__(unique_id, model, name)
         self.preference = None
         self._list_items = list_items
+        self._list_items_left = list_items.copy()
         self._committed = False
+        self._arguments = []
 
     def step(self):
         super().step()
@@ -100,25 +102,38 @@ class ArgumentAgent(CommunicatingAgent):
         :param message: Message - the message received
         :return: string - the strongest supportive argument
         """
+        # TODO: replace (o_i,reasons) by argument 
         o_i = message.get_content()
         reasons = self.support_proposal(o_i)
         if reasons == NULL_ARG:  # No more argument pro o_i
-            list_items_copy = self._list_items.copy()
-            list_items_copy.remove(o_i)
-            o_j = random.choice(list_items_copy)
+            # Remove o_i from the list of items
+            self._list_items_left.remove(o_i)
+            o_j = random.choice(self._list_items_left)
             return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.PROPOSE, content=o_j)
         else:
-            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content=(o_i,reasons))
+            # Log the sent argument
+            self._arguments.append((self,o_i,reasons))
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content= (o_i,reasons))
     
     def handle_ARGUE_message(self, message):
+        """
+        Used when the agent receives "ARGUE" 
+        :param message: Message - the message received
+        :return: string - argue back 
+        """
         o_i,reasons = message.get_content()
-        counter_reasons = self.support_proposal(o_i)
-        if reasons in [counter_reasons]: 
+        # Log the received argument
+        self._arguments.append((message.get_exp(),self,o_i,reasons))
+        self_reasons = self.counter_proposal(o_i)
+        # Check if the argument is supported by the other agent
+        # TODO: to be implemented
+        if len(self.counter_proposal(o_i)) > 0 :
+            o_i = o_i
+            reasons = self.counter_proposal(o_i)
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content= (o_i,reasons))
+        # If the argument is supported by the other agent, then the agent accepts the argument
+        else: 
             return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content=o_i)
-        else:
-            preferences = self.get_preference()
-            o_j = preferences.most_preferred(self._list_items)
-            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.PROPOSE, content=o_j)
 
     def generate_preferences(self, list_items, verbose=False, csv=False) -> None:
         """
@@ -162,19 +177,30 @@ class ArgumentAgent(CommunicatingAgent):
         """
         Used when the agent receives "ASK_WHY" after having proposed an item 
         :param item: str - name of the item which was proposed
-        :return: string - the strongest supportive argument
+        :return arg: Argument - the strongest supportive argument
         """
-        arg = Argument(boolean_decision=False, item=item)
-        possible_proposals = arg.List_supporting_proposal(
+        arg = Argument(boolean_decision=True, item=item)
+        possible_proposals = arg.list_supporting_proposal(
             item, self.preference)
         if len(possible_proposals) == 0:
             return NULL_ARG
         for proposal in possible_proposals:
+            # Return a criterion that has the maximum value 
+            # TODO: Can be improved taking into account the importance of the criterion
             if self.preference.get_value(item, proposal) == Value.VERY_GOOD:
                 return proposal
             else:
                 temp_proposal = proposal
         return temp_proposal
+    
+    def counter_proposal(self, item):
+        """
+        Used when the agent receives "ARGUE" after having proposed an item 
+        :param item: str - name of the item which was proposed
+        :return arg: Argument - the strongest supportive argument
+        """
+        # TODO: implement the counter-argumentation mechanism
+        return []
     
     def argument_parsing(self, argument):
         """ returns ....
@@ -219,8 +245,9 @@ if __name__ == "__main__":
     argument_model.schedule.add(agent_two)
 
     # Send the proposal message
-    agent_one.send_message(Message(agent_one.get_name(
-    ), agent_two.get_name(), MessagePerformative.PROPOSE, electric_engine))
+    most_preferred_item = agent_two.preference.most_preferred(list_items)
+    agent_two.send_message(Message(agent_two.get_name(
+    ), agent_one.get_name(), MessagePerformative.PROPOSE, most_preferred_item))
 
     # Run the model on 10 steps
     step = 0

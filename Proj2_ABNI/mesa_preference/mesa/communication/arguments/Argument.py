@@ -12,19 +12,22 @@ class Argument:
     This class implements an argument used in the negotiation.
 
     attr:
-        decision:
-        item:
-        comparison_list:
-        couple_values_list:
+        decision: bool - the decision of the argument
+        item: str - the name of the item
+        comparison_list: list of Comparison - the list of comparisons
+        couple_values_list: list of CoupleValue - the list of couple values
     """
 
-    def __init__(self, boolean_decision, item):
+    def __init__(self, boolean_decision, item: Item):
         """Creates a new Argument.
         """
         self.__decision = boolean_decision
         self.__item = item.get_name()
-        self.__comparison_list = []
-        self.__couple_values_list = []
+        self.__comparison_list: list[Comparison] = []
+        self.__couple_values_list: list[CoupleValue] = []
+
+    def __str__(self) -> str:
+        return f"Argument Decision: {self.decision}, Item: {self.item}, comparision_list: {'|'.join(list(map(str, self.comparison_list)))}, couple_list: {'|'.join(list(map(str, self.couple_values_list)))}"
 
     def add_premiss_comparison(self, criterion_name_1, criterion_name_2):
         """Adds a premiss comparison in the comparison list.
@@ -45,7 +48,7 @@ class Argument:
         """
         supporting_proposal = []
         for criterion_name in preferences.get_criterion_name_list():
-            if (preferences.get_value(item, criterion_name) in [Value.GOOD,Value.VERY_GOOD]):
+            if (preferences.get_value(item, criterion_name) in [Value.GOOD, Value.VERY_GOOD]):
                 supporting_proposal.append(criterion_name)
         return supporting_proposal
 
@@ -57,7 +60,7 @@ class Argument:
         """
         attacking_proposal = []
         for criterion_name in preferences.get_criterion_name_list():
-            if preferences.get_value(item, criterion_name)  in [Value.BAD,Value.VERY_BAD]:
+            if preferences.get_value(item, criterion_name) in [Value.BAD, Value.VERY_BAD]:
                 attacking_proposal.append(criterion_name)
         return attacking_proposal
 
@@ -65,3 +68,6 @@ class Argument:
         """Returns the decision of the argument.
         """
         return self.__decision
+
+if __name__ == "__main__":
+   pass

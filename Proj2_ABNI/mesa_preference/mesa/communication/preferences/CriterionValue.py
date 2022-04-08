@@ -26,3 +26,8 @@ class CriterionValue:
         """Returns the value.
         """
         return self.__value
+    
+    def __str__(self):
+        """Returns a string representation of the CriterionValue.
+        """
+        return f"{self.__item} - {self.__criterion_name} - {self.__value}"
