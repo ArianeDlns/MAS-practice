@@ -33,7 +33,8 @@ class Preferences:
         """
         order_str = ""
         x = PrettyTable()
-        x.field_names = ["Item", *self.__criterion_name_list]
+        criterions = [str(criteria) + ': ' + str(criteria.value) for criteria in self.__criterion_name_list]
+        x.field_names = ["Item", *criterions]
         items = set([x.get_item() for x in self.__criterion_value_list])
         items = list(sorted(items, key=lambda item: item.get_score(self), reverse=True))
         for item in items:

@@ -99,21 +99,28 @@ class ArgumentAgent(CommunicatingAgent):
         :return: string - argue back 
         """
         args = message.get_content()
-        chosen_item = [item for item in self._list_items if item.get_name()==args.get_item()][0]
-        # Log the received argument
-        self._arguments.append((message.get_exp(),args))
-        # Check if the argument is supported by the other agent
-        # TODO: to be implemented
-        counter_arg, score = self.counter_proposal(chosen_item)
-        if counter_arg != NULL_ARG:
-            chosen_item = chosen_item
-            # Log the send argument 
+        try:
+            chosen_item = [item for item in self._list_items if item.get_name()==args.get_item()][0]
+            decision = args.get_decision()
+            # Log the received argument
+            self._arguments.append((message.get_exp(),args))
+            # Check if the argument is supported by the other agent
+            counter_arg, score = self.counter_proposal(chosen_item)
+            send_arg, score = self.support_proposal(chosen_item)
+        except AttributeError:
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content='I have no more argument...')
+        # No more argument 
+        if counter_arg == NULL_ARG and send_arg == NULL_ARG:
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content='I have no more argument...')
+        elif decision :
+            # Log the argument
             self._arguments.append((self,counter_arg))
             return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content= counter_arg)
-        # If the argument is supported by the other agent, then the agent accepts the argument
         else: 
-            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content=chosen_item)
-    
+            # Log the argument
+            self._arguments.append((self,counter_arg))
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content= send_arg)
+
     def handle_ASK_WHY_message(self, message):
         """
         Used when the agent receives "ASK_WHY" after having proposed an item 
@@ -182,6 +189,8 @@ class ArgumentAgent(CommunicatingAgent):
         arg = Argument(boolean_decision=True, item=item)
         possible_proposals = arg.list_supporting_proposal(
             item, self.preference)
+        prev_arg = [arg[1].argument_parsing()[0] for arg in self._arguments] 
+        possible_proposals = [proposal for proposal in possible_proposals if proposal not in prev_arg]
         if len(possible_proposals) == 0:
             return NULL_ARG, 0
         # TODO: Can be improved taking into account the importance of the criterion
