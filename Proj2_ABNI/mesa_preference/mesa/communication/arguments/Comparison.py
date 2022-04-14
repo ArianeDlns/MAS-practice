@@ -19,4 +19,4 @@ class Comparison:
     def __str__(self) -> str:
         """Returns a string representation of the comparison.
         """
-        return f"{self.best_criterion_name} > {self.worst_criterion_name}"
+        return f"{self.__best_criterion_name} > {self.__worst_criterion_name}"

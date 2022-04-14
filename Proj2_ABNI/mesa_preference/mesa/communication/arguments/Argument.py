@@ -32,8 +32,7 @@ class Argument:
     def add_premiss_comparison(self, criterion_name_1, criterion_name_2):
         """Adds a premiss comparison in the comparison list.
         """
-        self.__comparison_list.append(
-            Comparison(criterion_name_1, criterion_name_2))
+        self.__comparison_list.append(Comparison(criterion_name_1, criterion_name_2))
 
     def add_premiss_couple_values(self, criterion_name, value):
         """Add a premiss couple values in the couple values list.
