@@ -18,6 +18,11 @@ To run tests
 python3 -m communication.preferences.Preferences
 ```
 
+### 
+
+
+<p align="center"> <img src="https://github.com/ArianeDlns/MAS-practive/blob/main/Proj2_ABNI/img/argumentation.png" width="700" alt="argumentation"/> 
+
 ### Consignes: 
 
 Nous attendons de vous que vous rédigiez un petit rapport (5 pages max) sur votre modèle de négociation (surtout si vous avez opté pour des choix différents que ceux mentionnés dans le cours/TP). Mettez quelques  captures d'écran des sorties de votre implémentation. Calculez quelques statistiques sur les résultats  en fonction des paramètres de simulation (nombre d'agents, nombre d'items, ...). Vous devez clairement identifier les paramètres et les valeurs observées.
