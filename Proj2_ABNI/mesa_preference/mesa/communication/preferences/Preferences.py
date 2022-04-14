@@ -3,6 +3,8 @@
 #TO RUN TESTS : python3 -m communication.preferences.Preferences
 import random
 import math
+from prettytable import PrettyTable
+
 
 from communication.preferences.CriterionName import CriterionName
 from communication.preferences.CriterionValue import CriterionValue
@@ -26,9 +28,21 @@ class Preferences:
         self.__criterion_value_list = []
     
     def __str__(self):
-        """Returns a string representation of the Preferences.
         """
-        return f"{self.__criterion_name_list} - {self.__criterion_value_list}"
+        Print preferences for the agent
+        """
+        order_str = ""
+        x = PrettyTable()
+        x.field_names = ["Item", *self.__criterion_name_list]
+        items = set([x.get_item() for x in self.__criterion_value_list])
+        items = list(sorted(items, key=lambda item: item.get_score(self), reverse=True))
+        for item in items:
+            values = [
+                self.get_value(item, criterion_name)
+                for criterion_name in self.__criterion_name_list
+            ]
+            x.add_row([str(item), *values])
+        return order_str + "\n" + x.get_string()
 
     def get_criterion_name_list(self):
         """Returns the list of criterion name.

@@ -19,4 +19,14 @@ class CoupleValue:
     def __str__(self) -> str:
         """Returns a string representation of the couple value.
         """
-        return f"Criterion '{self.__criterion_name}' with value '{self.__value}'"
+        return f" {self.__criterion_name}={self.__value}"
+    
+    def get_criterion_name(self):
+        """Returns the name of the criterion.
+        """
+        return self.__criterion_name
+    
+    def get_value(self):
+        """Returns the value of the criterion.
+        """
+        return self.__value

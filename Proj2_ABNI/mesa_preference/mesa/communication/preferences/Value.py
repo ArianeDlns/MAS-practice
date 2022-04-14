@@ -23,10 +23,10 @@ class Value(Enum):
         return Value[word_value]
 
     def __str__(self):
-        dictionnary_value = dict(VERY_BAD="Very bad",
+        dictionnary_value = dict(VERY_BAD="Very Bad",
                                 BAD="Bad",
                                 AVERAGE="Average",
                                 GOOD="Good",
-                                VERY_GOOD="Very good")
+                                VERY_GOOD="Very Good")
         word_value = list(dictionnary_value.keys())[self.value]
         return dictionnary_value[word_value]

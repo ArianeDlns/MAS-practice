@@ -45,10 +45,4 @@ class Item:
             sum_result = sum_result + criterion_weight * self.get_value(preferences, criterion_name).value
             criterion_weight = criterion_weight / 2
         return sum_result
-
-    def get_name(self):
-        """Returns the name of the item.
-        """
-        return self.__name
-    
     

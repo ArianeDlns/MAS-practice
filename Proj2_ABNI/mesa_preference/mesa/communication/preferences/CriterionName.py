@@ -23,10 +23,10 @@ class CriterionName(Enum):
         return CriterionName[word_value]
 
     def __str__(self):
-        dictionnary_value = dict(PRODUCTION_COST="Production cost",
+        dictionnary_value = dict(PRODUCTION_COST="Cost",
                                  CONSUMPTION="Consumption",
                                  DURABILITY="Durability",
-                                 ENVIRONMENT_IMPACT="Environment impact",
+                                 ENVIRONMENT_IMPACT="Environment Impact",
                                  NOISE="Noise")
         word_value = list(dictionnary_value.keys())[self.value]
         return dictionnary_value[word_value]

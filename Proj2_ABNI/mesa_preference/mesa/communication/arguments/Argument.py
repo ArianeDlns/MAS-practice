@@ -27,7 +27,7 @@ class Argument:
         self.__couple_values_list: list[CoupleValue] = []
 
     def __str__(self) -> str:
-        return f"Argument Decision: {self.decision}, Item: {self.item}, comparision_list: {'|'.join(list(map(str, self.comparison_list)))}, couple_list: {'|'.join(list(map(str, self.couple_values_list)))}"
+        return f"{'not'*(not self.__decision)} {self.__item} <= {'|'.join(list(map(str, self.__couple_values_list)))}, {'|'.join(list(map(str, self.__comparison_list)))}"
 
     def add_premiss_comparison(self, criterion_name_1, criterion_name_2):
         """Adds a premiss comparison in the comparison list.
@@ -69,5 +69,18 @@ class Argument:
         """
         return self.__decision
 
+    def get_item(self):
+        """Returns the item of the argument.
+        """
+        return self.__item
+
+    def argument_parsing(self):
+        """ returns ....
+        :param argument: :return: 
+        """
+        criterion_used = [couple.get_criterion_name() for couple in self.__couple_values_list]
+        return criterion_used
+
+
 if __name__ == "__main__":
-   pass
+    pass
