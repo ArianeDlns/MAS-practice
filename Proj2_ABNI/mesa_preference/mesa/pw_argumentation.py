@@ -110,10 +110,11 @@ class ArgumentAgent(CommunicatingAgent):
             # Print scores
             # print("Counter proposal: ", counter_score, "- Support proposal: ", pro_score)
         except AttributeError:
-            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content='I have no more argument...')
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content='euuuh...')
         # No more argument 
         if counter_arg == NULL_ARG and send_arg == NULL_ARG:
-            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content='I have no more argument...')
+            last_item = self._list_items_left[-1]
+            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content=last_item)
         elif decision: 
             if counter_score > pro_score:
                 # Log the argument
@@ -260,11 +261,25 @@ if __name__ == "__main__":
     CGREEN = '\x1b[6;30;42m'
     CEND = '\x1b[0m'
 
+    cRED = '\033[91m'
+    cGREEN = '\033[92m'
+    cYELLOW = '\033[93m'
+    cPURPLE = '\033[95m'
+    cEND = '\033[0m'
+
+
     argument_model = ArgumentModel()
 
-    diesel_engine = Item("Diesel Engine", "A super cool diesel engine")
-    electric_engine = Item("Electric Engine", "A very quiet and ecofriendly engine")
-    list_items = [diesel_engine, electric_engine]
+    diesel_engine = Item(cRED+"Diesel Engine"+cEND, "A super cool diesel engine")
+    electric_engine = Item(cGREEN+"Electric Engine"+cEND, "A very quiet and ecofriendly engine")
+    mixed_engine = Item(cPURPLE+"Mixed Engine"+cEND, "Engine")
+    mixed_engine_1 = Item("Mixed Engine 1", "Engine")
+    mixed_engine_2 = Item("Mixed Engine 2", "Engine")
+    mixed_engine_3 = Item("Mixed Engine 3", "Engine")
+    mixed_engine_4 = Item("Mixed Engine 4", "Engine")
+    mixed_engine_5 = Item("Mixed Engine 5", "Engine")
+    mixed_engine_6 = Item("Mixed Engine 6", "Engine")
+    list_items = [diesel_engine, electric_engine, mixed_engine]
 
     # Agent 1
     agent_one = ArgumentAgent(0, argument_model, CRED + "agent_one" + CEND, list_items)
@@ -285,8 +300,8 @@ if __name__ == "__main__":
     agent_two.send_message(Message(agent_two.get_name(
     ), agent_one.get_name(), MessagePerformative.PROPOSE, most_preferred_item))
 
-    # Run the model on 10 steps
+    # Run the model on 100 steps
     step = 0
-    while step < 10:
+    while step < 100:
         argument_model.step()
         step += 1

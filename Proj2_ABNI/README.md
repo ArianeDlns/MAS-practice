@@ -18,10 +18,18 @@ To run tests
 python3 -m communication.preferences.Preferences
 ```
 
-### 
+### Résultats 
 
+#### Résumé des résultats
+<p align="center"> <img src="https://github.com/ArianeDlns/MAS-practice/blob/master/Proj2_ABNI/img/argumentation_CSV.png" width="700" alt="argumentation"/> 
 
-<p align="center"> <img src="https://github.com/ArianeDlns/MAS-practice/blob/master/Proj2_ABNI/img/argumentation.png" width="700" alt="argumentation"/> 
+Nous voyons ici les résultats pour le cas d'une argumentation à deux agents avec deux items. Les préférences sont celles issues du [preferences.csv](https://github.com/ArianeDlns/MAS-practice/blob/master/Proj2_ABNI/mesa_preference/mesa/preferences.csv) qui correspond au sujet du projet. On voit ainsi que chacun des agents parle à son tour et propose ou argumente sur les critères.
+
+<p align="center"> <img src="https://github.com/ArianeDlns/MAS-practice/blob/master/Proj2_ABNI/img/argumentation_3_items.png" width="700" alt="argumentation"/> 
+
+Nous avons ensuite étendu notre étude à trois items. On voit ainsi que les agents ont maintenant trois choix différents pour argumenter. Leur préférences ont été générées aléatoirement.
+
+#### Statistiques pertinentes
 
 ### Consignes: 
 
@@ -34,3 +42,4 @@ Préparez un zip de votre code. La qualité du code (modularité, propreté, com
 
 ## To do list
 - [x] read .csv
+- [x] color les agents/items/propositions
