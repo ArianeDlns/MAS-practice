@@ -1,4 +1,3 @@
-from os import pread
 from mesa import Model
 from mesa.time import RandomActivation
 

@@ -41,8 +41,6 @@ Nous voyons ici les résultats pour le cas d'une argumentation à deux agents av
 
 Nous avons ensuite étendu notre étude à trois items. On voit ainsi que les agents ont maintenant trois choix différents pour argumenter. Leur préférences ont été générées aléatoirement.
 
-### Statistiques pertinentes
-
 ## Choix techniques
 ### Algorithme de négociation
 <p align="center"> <img src="https://github.com/ArianeDlns/MAS-practice/blob/master/Proj2_ABNI/img/algorithm.png" width="700" alt="algorithm"/> 
