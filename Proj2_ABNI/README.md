@@ -1,21 +1,26 @@
 # Argument-Based Negociation Interaction
 
-Imagine that a car manufacturer wants to launch a new car on the market. For this, a crucial choice is the one of the engines that should meet some technical requirements but at the same time be attractive for the customers (economic, robust, ecological, etc.). Several types of engines exist and thus provide a large offer of cars models: essence or diesel Internal Combustion Engine (ICE), Compressed Natural GAS (CNG), Electric Battery (EB), Fuel Cell (FC), etc. The company decides to take into account different criteria to evaluate them: Consumption, environmental impact (CO2, clean fuel, NOX1...), cost, durability, weight, targeted maximum speed, etc. To establish the best offer/choice among a large set of options, they decide to simulate a negotiation process where agents, with different opinions and preferences (even different knowledge and expertise), discuss the issue to end up with the best offer. The simulation will allow the company to simulate several typologies of agent behaviors (expertise, role, preferences, . . . ) at a lower cost within a reasonable time.  
-The practical sessions in this Multi-Agent System Course will be devoted to the programming of a negotiation & argumentation simulation. Agents representing human engineering will need to negotiate with each other to make a joint decision regarding choosing the best engine. The negotiation comes when the agents have different preferences on the criteria, and the argumentation will help them decide which item to select. Moreover, the arguments supporting the best choice will help build the justification supporting it, an essential element for the company to develop its marketing campaign.
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) 
+[![Open in Visual Studio Code](https://img.shields.io/badge/Editor-VSCode-blue?style=flat-square&logo=visual-studio-code&logoColor=white)](https://github.dev/ArianeDlns/MAS-practice/tree/master/Proj2_ABNI) [![GitHub commit](https://badgen.net/github/last-commit/ArianeDlns/MAS-practice/master)](https://GitHub.com/ArianeDlns/MAS-practice/commits/master) [![Report](https://img.shields.io/badge/Report-1.2-green?style=square&logo=overleaf&logoColor=white)](https://fr.overleaf.com/read/zcjpxdzwdbnk)
+
+
+Imaginons qu'un constructeur automobile veuille lancer une nouvelle voiture sur le marché. Pour cela, un choix crucial est celui du moteur qui doit répondre à certaines exigences techniques tout en étant attractif pour les clients (économique, robuste, écologique, etc.). Plusieurs types de moteurs existent et fournissent ainsi une large offre de modèles de voitures : moteur à combustion interne (ICE) essence ou diesel, gaz naturel comprimé (GNC), batterie électrique (EB), pile à combustible (FC), etc. L'entreprise décide de prendre en compte différents critères pour les évaluer : Consommation, impact environnemental (CO2, carburant propre, NOX1...), coût, durabilité, poids, vitesse maximale visée, etc. Pour établir la meilleure offre/le meilleur choix parmi un large ensemble d'options, ils décident de simuler un processus de négociation où des agents, avec des opinions et des préférences différentes (voire des connaissances et une expertise différentes), discutent du problème pour aboutir à la meilleure offre. La simulation permettra à l'entreprise de simuler plusieurs typologies de comportements d'agents (expertise, rôle, préférences, . . .) à moindre coût et dans un délai raisonnable.  
+Les sessions pratiques de ce cours sur les systèmes multi-agents seront consacrées à la programmation d'une simulation de négociation et d'argumentation. Les agents représentant le génie humain devront négocier entre eux pour prendre une décision commune concernant le choix du meilleur moteur. La négociation intervient lorsque les agents ont des préférences différentes sur les critères, et l'argumentation les aidera à décider quel élément choisir. De plus, les arguments soutenant le meilleur choix aideront à construire la justification de celui-ci, un élément essentiel pour que l'entreprise puisse développer sa campagne de marketing.
 
 Les agents ont la même liste de critères et la même liste d'items. 
 
 ### Running the code 
 
-Running `pw_argumentation.py` 
-```
-cd mesa_preference/mesa/
-python3 pw_argumentation.py 
+running `pw_argumentation.py` 
+``` bash
+cd mesa_preference/mesa/ # change directory to the mesa folder
+pip install -r requirements.txt # install all the requirements
+python3 pw_argumentation.py # run the code
 ```
 
-To run tests 
-```
-python3 -m communication.preferences.Preferences
+run tests 
+``` bash
+python3 -m communication.preferences.Preferences # run the tests
 ```
 
 ### Résultats 
@@ -36,6 +41,52 @@ Nous avons ensuite étendu notre étude à trois items. On voit ainsi que les ag
 Nous attendons de vous que vous rédigiez un petit rapport (5 pages max) sur votre modèle de négociation (surtout si vous avez opté pour des choix différents que ceux mentionnés dans le cours/TP). Mettez quelques  captures d'écran des sorties de votre implémentation. Calculez quelques statistiques sur les résultats  en fonction des paramètres de simulation (nombre d'agents, nombre d'items, ...). Vous devez clairement identifier les paramètres et les valeurs observées.
 
 Préparez un zip de votre code. La qualité du code (modularité, propreté, commentaires...) sera prise en compte.
+
+### Structure 
+
+```bash
+.
+├── MAS_Course6.pdf # Course materials
+├── PW4_engine.pdf # Course materials
+├── README.md
+├── img
+│   ├── argumentation_3_items.png
+│   └── argumentation_CSV.png
+└── mesa_preference
+    └── mesa
+        ├── communication
+        │   ├── __init__.py
+        │   ├── agent
+        │   │   ├── CommunicatingAgent.py
+        │   │   └── __init__.py
+        │   ├── arguments
+        │   │   ├── Argument.py
+        │   │   ├── Comparison.py
+        │   │   ├── CoupleValue.py
+        │   │   └── __init__.py
+        │   ├── mailbox
+        │   │   ├── Mailbox.py
+        │   │   └── __init__.py
+        │   ├── message
+        │   │   ├── Message.py
+        │   │   ├── MessagePerformative.py
+        │   │   ├── MessageService.py
+        │   │   └── __init__.py
+        │   ├── preferences
+        │   │   ├── CriterionName.py
+        │   │   ├── CriterionValue.py
+        │   │   ├── Item.py
+        │   │   ├── Preferences.py # preferences script
+        │   │   ├── Value.py
+        │   │   └── __init__.py
+        │   ├── requirements.txt
+        │   └── runtests.py
+        ├── preferences.csv # file with the preferences
+        ├── preferences_project.csv # (optional) file with the preferences for the project
+        ├── pw_argumentation.py # main script
+        ├── requirements.txt # requirements
+        └── runtests.py # (optional) run tests
+```
 
 ### Date limite
 :calendar: 15 avril 2022 
