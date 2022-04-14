@@ -21,7 +21,7 @@ python3 -m communication.preferences.Preferences
 ### 
 
 
-<p align="center"> <img src="https://github.com/ArianeDlns/MAS-practive/blob/main/Proj2_ABNI/img/argumentation.png" width="700" alt="argumentation"/> 
+<p align="center"> <img src="https://github.com/ArianeDlns/MAS-practice/blob/master/Proj2_ABNI/img/argumentation.png" width="700" alt="argumentation"/> 
 
 ### Consignes: 
 
