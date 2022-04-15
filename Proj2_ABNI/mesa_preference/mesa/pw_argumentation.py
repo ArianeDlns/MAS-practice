@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from mesa import Model
 from mesa.time import RandomActivation
 
@@ -46,6 +47,7 @@ class ArgumentAgent(CommunicatingAgent):
 
             # Handle the PROPOSE message
             if message.get_performative() == MessagePerformative.PROPOSE:
+                self._arguments = [] #Changing to another item so reset the arguments
                 message_to_send_back = self.handle_PROPOSE_message(message)
                 self.send_message(message_to_send_back)
 
@@ -74,10 +76,11 @@ class ArgumentAgent(CommunicatingAgent):
         o_i = message.get_content()
         preferences = self.get_preference()
         if preferences.is_item_among_top_10_percent(o_i, self._list_items):
-            o_j = preferences.most_preferred(self._list_items)
+            o_j = preferences.most_preferred(self._list_items_left)
             if o_i == o_j:
                 return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content=o_i)
             else:
+                self._arguments = [] #Changing to another item so reset the arguments
                 return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.PROPOSE, content=o_j)
         else:
             return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ASK_WHY, content=o_i)
@@ -98,37 +101,35 @@ class ArgumentAgent(CommunicatingAgent):
         :return: string - argue back 
         """
         args = message.get_content()
-        try:
-            chosen_item = [item for item in self._list_items if item.get_name()==args.get_item()][0]
-            decision = args.get_decision()
-            # Log the received argument
+
+        chosen_item = [item for item in self._list_items if item.get_name()==args.get_item()][0]
+        decision = args.get_decision()
+        # Log the received argument
+        if args != NULL_ARG: #Don't add null argument to the argument list
             self._arguments.append((message.get_exp(),args))
-            # Check if the argument is supported by the other agent
-            counter_arg, counter_score = self.counter_proposal(chosen_item,args)
-            send_arg, pro_score = self.support_proposal(chosen_item)
-            # Print scores
-            # print("Counter proposal: ", counter_score, "- Support proposal: ", pro_score)
-        except AttributeError:
-            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content='euuuh...')
+        # Check if the argument is supported by the other agent
+        counter_arg, counter_score = self.counter_proposal(chosen_item,args)
+        send_arg, pro_score = self.support_proposal(chosen_item)
+        # Print scores
+        # print("Counter proposal: ", counter_score, "- Support proposal: ", pro_score)
+        
         # No more argument 
-        if counter_arg == NULL_ARG and send_arg == NULL_ARG:
-            last_item = self._list_items_left[-1]
-            return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content=last_item)
-        elif decision: 
-            if counter_score > pro_score:
+        if decision: 
+            if counter_score > args.get_score():
                 # Log the argument
                 self._arguments.append((self,counter_arg))
                 return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content= counter_arg)
-            elif counter_score <= pro_score:
+            else:
                 return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ACCEPT, content= chosen_item)
-        elif not decision: 
-            if pro_score > counter_score:
+        else: 
+            if pro_score > args.get_score():
              # Log the argument
                 self._arguments.append((self,counter_arg))
                 return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.ARGUE, content= send_arg)
-            elif pro_score <= counter_score:
+            else:
                 self._list_items_left.remove(chosen_item)
-                o_j = random.choice(self._list_items_left)
+                o_j = self.get_preference().most_preferred(self._list_items_left) # Propose the most preferred item
+                self._arguments = [] #Changing to another item so reset the arguments
                 return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.PROPOSE, content=o_j)
 
     def handle_ASK_WHY_message(self, message):
@@ -139,10 +140,11 @@ class ArgumentAgent(CommunicatingAgent):
         """
         item_chosen = message.get_content()
         if type(item_chosen) == Item:
-            send_arg, score = self.support_proposal(item_chosen)
+            send_arg, _ = self.support_proposal(item_chosen)
             if send_arg == NULL_ARG:  # No more argument pro o_i
                 self._list_items_left.remove(item_chosen)
                 other_item = random.choice(self._list_items_left)
+                self._arguments = [] #Changing to another item so reset the arguments
                 return Message(from_agent=self.get_name(), to_agent=message.get_exp(), message_performative=MessagePerformative.PROPOSE, content=other_item)
             else:
                 # Log the send argument 
@@ -196,19 +198,19 @@ class ArgumentAgent(CommunicatingAgent):
         :param item: str - name of the item which was proposed
         :return arg: Argument - the strongest supportive argument
         """
+        prev_arg = [a[1].argument_parsing()[0] for a in self._arguments if a != NULL_ARG] 
         arg = Argument(boolean_decision=True, item=item)
         possible_proposals = arg.list_supporting_proposal(
             item, self.preference)
-        prev_arg = [arg[1].argument_parsing()[0] for arg in self._arguments] 
         possible_proposals = [proposal for proposal in possible_proposals if proposal not in prev_arg]
         if len(possible_proposals) == 0:
             return NULL_ARG, 0
         # TODO: Can be improved taking into account the importance of the criterion
         else:       
-            values = [proposal.value * self.preference.get_value(item, proposal).value for proposal in possible_proposals]
+            values = [(5-proposal.value) + self.preference.get_value(item, proposal).value/10 for proposal in possible_proposals]
             index_max_value = values.index(max(values))
             proposal = possible_proposals[index_max_value]
-        final_arg = Argument(boolean_decision=True, item=item)
+        final_arg = Argument(boolean_decision=True, item=item, score = max(values))
         value = self.preference.get_value(item, proposal)
         final_arg.add_premiss_couple_values(proposal,value)
         return final_arg, max(values)
@@ -225,16 +227,18 @@ class ArgumentAgent(CommunicatingAgent):
         possible_proposals = arg.list_attacking_proposal(
             item, self.preference)
         # Remove used criterion already used 
-        prev_arg = [arg[1].argument_parsing()[0] for arg in self._arguments] 
+        prev_arg = [a[1].argument_parsing()[0] for a in self._arguments if a != NULL_ARG] 
         possible_proposals = [proposal for proposal in possible_proposals if proposal not in prev_arg]
         if len(possible_proposals) == 0:
             return NULL_ARG, 0
         # TODO: Can be improved taking into account the importance of the criterion
         else:       
-            values = [(5 - proposal.value) * (5 - self.preference.get_value(item, proposal).value) for proposal in possible_proposals]
+            values = [(5 - proposal.value) + (5  - self.preference.get_value(item, proposal).value)/10 for proposal in possible_proposals]
             index_max_value = values.index(max(values))
             proposal = possible_proposals[index_max_value]
-        final_arg = Argument(boolean_decision=False, item=item)
+        if proposal.value > prev_arg_criteria.value: # The proposal has not a higher rank than the previous one
+            return NULL_ARG, 0
+        final_arg = Argument(boolean_decision=False, item=item, score = max(values))
         value = self.preference.get_value(item, proposal)
         final_arg.add_premiss_couple_values(proposal,value)
         final_arg.add_premiss_comparison(proposal, prev_arg_criteria)

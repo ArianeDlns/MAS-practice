@@ -18,13 +18,14 @@ class Argument:
         couple_values_list: list of CoupleValue - the list of couple values
     """
 
-    def __init__(self, boolean_decision, item: Item):
+    def __init__(self, boolean_decision, item: Item, score = 0):
         """Creates a new Argument.
         """
         self.__decision = boolean_decision
         self.__item = item.get_name()
         self.__comparison_list: list[Comparison] = []
         self.__couple_values_list: list[CoupleValue] = []
+        self.__score = score
 
     def __str__(self) -> str:
         return f"{'not'*(not self.__decision)} {self.__item} <= {'|'.join(list(map(str, self.__couple_values_list)))}, {'|'.join(list(map(str, self.__comparison_list)))}"
@@ -32,7 +33,11 @@ class Argument:
     def add_premiss_comparison(self, criterion_name_1, criterion_name_2):
         """Adds a premiss comparison in the comparison list.
         """
-        self.__comparison_list.append(Comparison(criterion_name_1, criterion_name_2))
+        #best criterion is the criterion with the lower value
+        best_criterion_name = min((criterion_name_1, criterion_name_1.value), (criterion_name_2, criterion_name_2.value), key=lambda x : x[1])[0]
+        #worst criterion is the criterion with the higher value
+        worst_criterion_name = max((criterion_name_1, criterion_name_1.value), (criterion_name_2, criterion_name_2.value), key=lambda x : x[1])[0]
+        self.__comparison_list.append(Comparison(best_criterion_name, worst_criterion_name))
 
     def add_premiss_couple_values(self, criterion_name, value):
         """Add a premiss couple values in the couple values list.
@@ -72,6 +77,11 @@ class Argument:
         """Returns the item of the argument.
         """
         return self.__item
+
+    def get_score(self):
+        """Returns the score of the argument.
+        """
+        return self.__score
 
     def argument_parsing(self):
         """ returns ....
